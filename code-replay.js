@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const typingSpeed = 100; // Speed in milliseconds
+    const typingSpeed = 10; // Speed in milliseconds
     const typedCodeBlock = document.getElementById('typed-code');
     const hiddenCodeBlock = document.getElementById('hidden-code');
     let linesTyped = [];
     let dynamicCode = "";
-    let changedElement = null;
 
     async function fetchCode(filePath) {
         const response = await fetch(filePath);
@@ -40,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (position < 0) {
             position = 0;
         }
-    
+
         // Slice and concatenate
         dynamicCode = dynamicCode.slice(0, position) + char + dynamicCode.slice(position);
         hiddenCodeBlock.textContent = dynamicCode;
@@ -48,40 +47,34 @@ document.addEventListener('DOMContentLoaded', function () {
         await hljs.highlightElement(hiddenCodeBlock);
 
         // compare hiddenCodeBlock with typedCodeBlock
-        hiddenCodeBlock.innerHTML += "<span class='endspan'>&nbsp;</span>";
-        changedElement = findFirstDifferingElement(hiddenCodeBlock, typedCodeBlock);
+        //hiddenCodeBlock.innerHTML += "<span class='endspan'>&nbsp;</span>";
+        let changedElement = findFirstDifferingElement(hiddenCodeBlock, typedCodeBlock);
         moveChildren(hiddenCodeBlock, typedCodeBlock);
-        hiddenCodeBlock.innerHTML = typedCodeBlock.innerHTML;
-        typedCodeBlock.innerHTML = hiddenCodeBlock.innerHTML;
-
+        if(changedElement) {
+            changedElement.scrollIntoView();
+        }
     }
 
     function findFirstDifferingElement(element1, element2) {
         // Get child elements of both nodes
         let children1 = element1.children;
         let children2 = element2.children;
-    
+
         // Ensure both elements have children
         if (!children1 || !children2) return null;
-    
+
         // Compare number of children
         let length = Math.min(children1.length, children2.length);
-    
+
         // Iterate over each pair of children
         for (let i = 0; i < length; i++) {
             // Check if content is different
-            if (children1[i].textContent.trim() !== children2[i].textContent.trim()) {
+            if (children1[i].textContent !== children2[i].textContent) {
                 return children1[i]; // Return the first differing element
-            } else {
-                // Recursively check their children
-                //let differingChild = findFirstDifferingElement(children1[i], children2[i]);
-                //if (differingChild) {
-                //    return differingChild;
-                //}
             }
         }
-    
-        return element1.lastChild; // No differing element found
+
+        return null; // No differing element found
     }
 
     function moveChildren(sourceDiv, targetDiv) {
@@ -90,14 +83,14 @@ document.addEventListener('DOMContentLoaded', function () {
             targetDiv.appendChild(sourceDiv.firstChild);
         }
     }
-    
+
 
     // Function to simulate typing
     async function typeCode() {
 
         // Load your code and typing order here (you can use fetch if the files are served)
         const code = await fetchCode("files/hello-world.cs");
-        const typingOrder = ["1-6","41","12-13","15","14","7-8","10","9", "17-40"]; // Example order
+        const typingOrder = ["1-6","45","12-13","15","14","7-8","10","9", "21-44", "17-20"]; // Example order
 
         let lines = code.split('\n');
         for (let range of typingOrder) {
@@ -107,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 let line = lines[ii].replace(/\t/g,"    ");
 
-                if(line.trim() == 'Console.WriteLine("Hello World 5");') {
+                if(line.trim() == 'static void LastOutput()') {
                     console.log('aargh');
                 }
                 // find where to start typing the next line
@@ -115,8 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 let insertPoint = findNthNewlinePosition(dynamicCode, insertLine);
 
                 await typeLine(line, insertPoint);
-                // changedElement.scrollIntoView();
-                typedCodeBlock.lastChild.scrollIntoView();
                 linesTyped.push(ii);
                 linesTyped = linesTyped.sort((a, b) => a - b);
             }
