@@ -102,10 +102,30 @@ document.addEventListener('DOMContentLoaded', function () {
     async function typeCode() {
 
         // Load your code and typing order here (you can use fetch if the files are served)
-        const code = await fetchCode("files/hello-world.cs");
-        const typingOrder = ["1-6","43","11-12","14","13","7-8","10","9","19-42", "15-18"]; // Example order
+        // const code = await fetchCode("files/hello-world.cs");
+        const code = await fetchCode("files/rpg-inventory.cs");
 
         let lines = code.split('\n');
+
+        // set up an array of line numbers to type in order
+        // for example, typingOrder = ["1-3", "5", "7-10"] means type lines 1, 2, 3, 5, 7, 8, 9, 10
+        // put this at the end of your file in a comment like this: // typingOrder=1-3,5,7-10
+        // if typingOrder is not specified, then type all lines in order
+
+        // look in reverse order through the lines array and find the first line that contains the string "typingOrder="
+        let lastLine = null;
+        for (let i = lines.length - 1; i >= 0; i--) {
+            if (lines[i].includes("typingOrder=")) {
+                lastLine = i;
+                break;
+            }
+        }
+        if(lastLine === null) {
+            typingOrder = [`1-${lines.length}`];
+        } else {
+            typingOrder = lines[lastLine].trim().replace(/\s/g,"").split("=")[1].split(",");
+        }
+
         for (let range of typingOrder) {
             let [start, end] = range.split('-').map(Number);
             for (let i = start; i <= (end || start); i++) {

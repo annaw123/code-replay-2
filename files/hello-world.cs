@@ -10,35 +10,8 @@ class Program
     }
     static void Output()
     {
-        Console.WriteLine("Hello World 1");
-    }
-    static void LastOutput()
-    {
-        Console.WriteLine("Hello World 2");
-    }
-    static void Output()
-    {
-        Console.WriteLine("Hello World 2");
-    }
-    static void Output()
-    {
-        Console.WriteLine("Hello World 3");
-    }
-    static void Output()
-    {
-        Console.WriteLine("Hello World 4");
-    }
-    static void Output()
-    {
-        Console.WriteLine("Hello World 5");
-    }
-    static void Output()
-    {
-        Console.WriteLine("Hello World 6");
-    }
-    static void Output()
-    {
-        Console.WriteLine("Hello World 7");
+        Console.WriteLine("Hello, World!");
     }
 }
-// "1-6","43","12-13","15","14","7-8","10","9","19-42", "15-18"
+
+// typingOrder=1-6,15,11-12,14,13,7-8,10,9
