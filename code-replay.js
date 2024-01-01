@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const typingSpeed = 10; // Speed in milliseconds
+    const typingSpeed = 83.3333333333; // Speed in milliseconds. 24 fps = 41.6666666667. 12 fps = 83.3333333333
     const typedCodeBlock = document.getElementById('typed-code');
     const hiddenCodeBlock = document.getElementById('hidden-code');
     let linesTyped = [];
