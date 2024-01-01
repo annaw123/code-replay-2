@@ -46,19 +46,32 @@ document.addEventListener('DOMContentLoaded', function () {
         hiddenCodeBlock.removeAttribute("data-highlighted");
         await hljs.highlightElement(hiddenCodeBlock);
 
+        // wrap any hiddenCodeBlock text fragment that is not wrapped in a span with a span
+        let children = hiddenCodeBlock.childNodes;
+        for (let i = 0; i < children.length; i++) {
+            if (children[i].nodeName == "#text") {
+                let span = document.createElement("span");
+                span.textContent = children[i].textContent;
+                children[i].replaceWith(span);
+            }
+        }
+
         // compare hiddenCodeBlock with typedCodeBlock
-        //hiddenCodeBlock.innerHTML += "<span class='endspan'>&nbsp;</span>";
         let changedElement = findFirstDifferingElement(hiddenCodeBlock, typedCodeBlock);
+
+        // now move the children from hiddenCodeBlock to typedCodeBlock
         moveChildren(hiddenCodeBlock, typedCodeBlock);
+
+        // now scroll to the changed element if necessary
         if(changedElement) {
-            changedElement.scrollIntoView();
+            changedElement.scrollIntoViewIfNeeded();
         }
     }
 
     function findFirstDifferingElement(element1, element2) {
-        // Get child elements of both nodes
-        let children1 = element1.children;
-        let children2 = element2.children;
+        // Get child nodes of both nodes
+        let children1 = element1.childNodes;
+        let children2 = element2.childNodes;
 
         // Ensure both elements have children
         if (!children1 || !children2) return null;
@@ -90,19 +103,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Load your code and typing order here (you can use fetch if the files are served)
         const code = await fetchCode("files/hello-world.cs");
-        const typingOrder = ["1-6","45","12-13","15","14","7-8","10","9", "21-44", "17-20"]; // Example order
+        const typingOrder = ["1-6","43","11-12","14","13","7-8","10","9","19-42", "15-18"]; // Example order
 
         let lines = code.split('\n');
         for (let range of typingOrder) {
             let [start, end] = range.split('-').map(Number);
             for (let i = start; i <= (end || start); i++) {
                 let ii = i - 1;
-
                 let line = lines[ii].replace(/\t/g,"    ");
 
-                if(line.trim() == 'static void LastOutput()') {
-                    console.log('aargh');
-                }
                 // find where to start typing the next line
                 let insertLine = getInsertLine(ii);
                 let insertPoint = findNthNewlinePosition(dynamicCode, insertLine);
