@@ -1,12 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const typingSpeed = 83.3333333333; // Speed in milliseconds. 24 fps = 41.6666666667. 12 fps = 83.3333333333
     const typedCodeBlock = document.getElementById('typed-code');
     const hiddenCodeBlock = document.getElementById('hidden-code');
+    const params = new URLSearchParams(window.location.search);
+    const programFileName = params.get('file');
+    const speedUpFactor = params.get('speedUpFactor') || 1;
+    const typingSpeed = 83.3333333333 / speedUpFactor; // Speed in milliseconds. 24 fps = 41.6666666667. 12 fps = 83.3333333333
+    if(!programFileName) {
+        typedCodeBlock.innerHTML = "<p>Error: No file specified. Add ?file=filename to the URL</p>";
+        return;
+    }
+    const consoleFileName = programFileName.replace(".cs", ".txt");
+
     let linesTyped = [];
     let dynamicCode = "";
 
-    async function fetchCode(filePath) {
+    async function fetchFile(filePath) {
         const response = await fetch(filePath);
+        if (!response.ok) {
+            typedCodeBlock.innerHTML = "<p>Error loading file: " + filePath + "</p>";
+        }
         return response.text();
     }
 
@@ -100,10 +112,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to simulate typing
     async function typeCode() {
-
         // Load your code and typing order here (you can use fetch if the files are served)
         // const code = await fetchCode("files/hello-world.cs");
-        const code = await fetchCode("files/rpg-inventory.cs");
+        const code = await fetchFile("files/"+programFileName);
 
         let lines = code.split('\n');
 
@@ -165,6 +176,53 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function typeResults() {
+        await delay(2000);
+        const consoleText = await fetchFile("files/"+consoleFileName);
+        const delayMs = 400 / speedUpFactor;
+        let consoleOutputEl = document.getElementById("console-text");
+        let lines = consoleText.split('\n');
+        for (let line of lines) {
+            let p = document.createElement("p");
+            if (line.length > 0 && line.charAt(0) === '*') {
+                p.className = 'user-input';
+                consoleOutputEl.appendChild(p);
+                for(i = 0; i < 4; i++) {
+                    p.textContent = "_";
+                    p.scrollIntoViewIfNeeded();
+                    await delay(delayMs);
+                    p.textContent = " ";
+                    p.scrollIntoViewIfNeeded();
+                    await delay(delayMs);
+                }
+                for(i = 1; i < line.length; i++) {
+                    p.textContent = line.substring(1, i + 1);
+                    p.scrollIntoViewIfNeeded();
+                    await delay(delayMs / 4);
+                }
+                for(i = 0; i < 2; i++) {
+                    p.textContent = line.substring(1, line.length) + "_";
+                    p.scrollIntoViewIfNeeded();
+                    await delay(delayMs);
+                    p.textContent = line.substring(1, line.length) + " ";
+                    p.scrollIntoViewIfNeeded();
+                    await delay(delayMs);
+                }
+                await delay(delayMs);
+            } else {
+                p.textContent = line;
+                consoleOutputEl.appendChild(p);
+                p.scrollIntoViewIfNeeded();
+            }
+        }
+    }
+
     // Start typing
-    typeCode();
+    typeCode().then(() => {
+        typeResults();
+    });
 });

@@ -1,0 +1,88 @@
+sword
+shield
+You have 2 items in your inventory.
+What action do you want to take? (add/craft/look/drop/search) :
+*add
+
+What item are you adding to your inventory? :
+*dog
+
+Item added.
+
+sword
+shield
+dog
+You have 3 items in your inventory.
+What action do you want to take? (add/craft/look/drop/search) :
+*drop
+
+What item do you want to drop? :
+*shield
+
+Item dropped.
+
+sword
+dog
+You have 2 items in your inventory.
+What action do you want to take? (add/craft/look/drop/search) :
+*craft
+
+What item do you want to craft? :
+*fish
+
+You do not have the items to do this.
+
+sword
+dog
+You have 2 items in your inventory.
+What action do you want to take? (add/craft/look/drop/search) :
+*add
+
+What item are you adding to your inventory? :
+*gem
+
+Item added.
+
+sword
+dog
+gem
+You have 3 items in your inventory.
+What action do you want to take? (add/craft/look/drop/search) :
+*add
+
+What item are you adding to your inventory? :
+*leather
+
+Item added.
+
+sword
+dog
+gem
+leather
+You have 4 items in your inventory.
+What action do you want to take? (add/craft/look/drop/search) :
+*craft
+
+What item do you want to craft? :
+charm
+
+charm crafted.
+
+sword
+dog
+charm
+You have 3 items in your inventory.
+What action do you want to take? (add/craft/look/drop/search) :
+*search
+
+What item do you want to see if you have? :
+*dog
+
+You have the item.
+
+sword
+dog
+charm
+You have 3 items in your inventory.
+What action do you want to take? (add/craft/look/drop/search) :
+

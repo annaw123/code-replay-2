@@ -1,3 +1,15 @@
+pre {
+    margin: 0;
+}
+
+code {
+    font-family: "Fira mono", "Courier New", Courier, monospace;
+    background-color: #efefef;
+    font-size: 20px;
+    font-weight: 500;
+    white-space: pre-wrap;
+}
+
 .program {
     display: flex;
     flex: 1;
@@ -7,23 +19,37 @@
 .program-code {
     width: 50%;
     overflow-y: scroll;
-    overflow-x: w;
+    overflow-x: wrap;
     background-color: #fafafa;
     height: calc(100vh - 50px);
 }
 
-.console {
+.console-wrapper {
+    display: flex;
+    flex-direction: column;
     background-color: black;
     width: 50%;
     height: calc(100vh - 50px);
 }
 
-code {
-    font-family: "Fira mono", "Courier New", Courier, monospace;
-    background-color: #efefef;
-    font-size: 20px;
-    font-weight: 500;
-    white-space: pre-wrap;
+.console {
+    color: #5292F7;
+    overflow-y: scroll;
+    overflow-x: wrap;
+    padding: 1em;
+}
+
+.console-footer {
+    height: 2em;
+    flex: none;
+}
+
+.console p {
+    margin: 0;
+}
+
+.console .user-input {
+    color: white;
 }
 
 .hidden-div {
