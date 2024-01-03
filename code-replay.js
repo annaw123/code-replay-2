@@ -109,6 +109,56 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function indentLevel(line) {
+        return (line.trimEnd().match(/^\t+/) || [''])[0].length;
+    }
+
+    function isBlankLine(line) {
+        return line.trim() === "";
+    }
+
+    function addToArray(lines, arr, startIx, endIx) {
+        let activeIndentLevel = null;
+        for (let ix = startIx; ix <= endIx; ix++) {
+            let line = lines[ix];
+            if(line.trim() === "class Program") {
+                console.log("aargh");
+            }
+            let level = indentLevel(line);
+            if(isBlankLine(line)) {
+                arr.push(ix);
+            } else if(activeIndentLevel === null) {
+                arr.push(ix);
+                activeIndentLevel = level;
+            } else if(level <= activeIndentLevel) {
+                arr.push(ix);
+            } else if(lines[ix - 1].trim().startsWith("case") && level == activeIndentLevel + 1) {
+                arr.push(ix);
+                activeIndentLevel = level;
+            } else {
+                // find the next non-blank line with the same indent level as this one
+                let nextIx = ix + 1;
+                while(nextIx < endIx) {
+                    let nextLine = lines[nextIx];
+                    if(isBlankLine(nextLine)) {
+                        // keep going irrespective of indent level
+                    } else if(indentLevel(nextLine) <= activeIndentLevel) {
+                        break;
+                    }
+                    nextIx++;
+                }
+                arr.push(nextIx);
+                if(nextIx - ix > 1) {
+                    addToArray(lines, arr, ix, nextIx - 1)
+                } else if(nextIx - ix == 1) {
+                    arr.push(ix);
+                }
+                ix = nextIx;
+            }
+        }
+    }
+
+
 
     // Function to simulate typing
     async function typeCode() {
@@ -137,18 +187,25 @@ document.addEventListener('DOMContentLoaded', function () {
             typingOrder = lines[lastLine].trim().replace(/\s/g,"").split("=")[1].split(",");
         }
 
+        // add a blank line at the beginning so that the line numbers match the array indices
+        lines.unshift("");
+
         for (let range of typingOrder) {
             let [start, end] = range.split('-').map(Number);
-            for (let i = start; i <= (end || start); i++) {
-                let ii = i - 1;
-                let line = lines[ii].replace(/\t/g,"    ");
+            end ||= start;
+
+            let arr = [];
+            addToArray(lines, arr, start, end);
+
+            for(let ix of arr) {
+                let line = lines[ix].replace(/\t/g,"    ");
 
                 // find where to start typing the next line
-                let insertLine = getInsertLine(ii);
+                let insertLine = getInsertLine(ix);
                 let insertPoint = findNthNewlinePosition(dynamicCode, insertLine);
 
                 await typeLine(line, insertPoint);
-                linesTyped.push(ii);
+                linesTyped.push(ix);
                 linesTyped = linesTyped.sort((a, b) => a - b);
             }
         }
