@@ -14,4 +14,4 @@ class Program
     }
 }
 
-// typingOrder=1-6,15,11-12,14,13,7-8,10,9
+// typingOrder=1-6,15,11-14,7-10

@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const params = new URLSearchParams(window.location.search);
     const programFileName = params.get('file');
     const speedUpFactor = params.get('speedUpFactor') || 1;
+    const spacesPerTab = params.get('spacesPerTab') || 4;
     const typingSpeed = 83.3333333333 / speedUpFactor; // Speed in milliseconds. 24 fps = 41.6666666667. 12 fps = 83.3333333333
     if(!programFileName) {
         typedCodeBlock.innerHTML = "<p>Error: No file specified. Add ?file=filename to the URL</p>";
@@ -110,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function indentLevel(line) {
+        line = line.replace(/^ +/g, match => '\t'.repeat(match.length / spacesPerTab));
         return (line.trimEnd().match(/^\t+/) || [''])[0].length;
     }
 
