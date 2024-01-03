@@ -3,14 +3,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const hiddenCodeBlock = document.getElementById('hidden-code');
     const params = new URLSearchParams(window.location.search);
     const programFileName = params.get('file');
-    const speedUpFactor = params.get('speedUpFactor') || 1;
-    const spacesPerTab = params.get('spacesPerTab') || 4;
+    const speedUpFactor = parseInt(params.get('speedUpFactor') || 1, 10);
+    const spacesPerTab = parseInt(params.get('tabs') || 4, 10);
     const typingSpeed = 83.3333333333 / speedUpFactor; // Speed in milliseconds. 24 fps = 41.6666666667. 12 fps = 83.3333333333
     if(!programFileName) {
         typedCodeBlock.innerHTML = "<p>Error: No file specified. Add ?file=filename to the URL</p>";
         return;
     }
-    const consoleFileName = programFileName.replace(".cs", ".txt");
+    const consoleFileName = programFileName.replace(".cs", ".txt").replace(".py", ".txt");
+
+    let languageClass = programFileName.endsWith(".cs") ? "language-csharp" : "language-python";
+    typedCodeBlock.classList.add(languageClass);
+    hiddenCodeBlock.classList.add(languageClass);
+
+    let hasBlockDelimeters = programFileName.endsWith(".cs");
 
     let linesTyped = [];
     let dynamicCode = "";
@@ -33,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function findNthNewlinePosition(str, n) {
-        let count = 1;
+        let count = 0;
         for (let i = 0; i < str.length; i++) {
             if (str[i] === '\n') {
                 count++;
@@ -119,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return line.trim() === "";
     }
 
-    function addToArray(lines, arr, startIx, endIx) {
+    function addDelimetedBlocks(lines, arr, startIx, endIx) {
         let activeIndentLevel = null;
         for (let ix = startIx; ix <= endIx; ix++) {
             let line = lines[ix];
@@ -151,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 arr.push(nextIx);
                 if(nextIx - ix > 1) {
-                    addToArray(lines, arr, ix, nextIx - 1)
+                    addDelimetedBlocks(lines, arr, ix, nextIx - 1)
                 } else if(nextIx - ix == 1) {
                     arr.push(ix);
                 }
@@ -160,6 +166,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function addNonDelimetedBlock(lines, arr, startIx, endIx) {
+        for (let ix = startIx; ix <= endIx; ix++) {
+            arr.push(ix);
+        }
+    }
 
 
     // Function to simulate typing
@@ -197,10 +208,14 @@ document.addEventListener('DOMContentLoaded', function () {
             end ||= start;
 
             let arr = [];
-            addToArray(lines, arr, start, end);
+            if(hasBlockDelimeters) {
+                addDelimetedBlocks(lines, arr, start, end);
+            } else {
+                addNonDelimetedBlock(lines, arr, start, end);
+            }
 
             for(let ix of arr) {
-                let line = lines[ix].replace(/\t/g,"    ");
+                let line = lines[ix].replace(/\t/g,' '.repeat(spacesPerTab));
 
                 // find where to start typing the next line
                 let insertLine = getInsertLine(ix);
