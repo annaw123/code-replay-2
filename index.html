@@ -3,11 +3,12 @@
     <head>
         <title>Code Typing Simulation</title>
         <link rel="stylesheet" href="/main.css">
-        <link rel="stylesheet" href="/highlight/styles/atom-one-light.min.css">
+        <link rel="stylesheet" href="/highlight/styles/atom-one-dark.min.css">
     </head>
-    <body>
-        <div class="program">
-            <div class="program-code">
+    <body id="body">
+        <div class="program" id="program">
+            <div class="buffer" id="buffer"></div>
+            <div class="program-code" id="program-code">
                 <pre><code class="hljs" id="typed-code"></code></pre>
             </div>
             <div class="console-wrapper">
