@@ -19,8 +19,8 @@
    Open [index.html](index.html) in your browser, specifying the code file via URL, for example `/?file=hello-world.cs`
 
 3. **Adding programs**
-   Place your code file (e.g. `my-program.cs`) in the `files/` folder.
-   Add a comment (e.g. `// typingOrder=...`) to control the typing sequence. Use a hyphen (-) for blocks, e.g. 1-9 and commas (,) to separate e.g. 1-9,23,10
+   Place your code file (e.g. `my-program.cs`) in the `files/` folder.  
+   Add a comment (e.g. `// typingOrder=...`) to control the typing sequence. Use a hyphen (-) for blocks, e.g. 1-9 and commas (,) to separate e.g. 1-9,23,10  
    Add a corresponding `.txt` file for the console output (e.g., `my-program.txt`). For 'user input', use an asterisk (*) on a new line.
 
 **Optional parameters:**
